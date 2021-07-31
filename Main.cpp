@@ -8,7 +8,6 @@
 #pragma comment (lib, "SDL2.lib")
 #pragma comment (lib, "SDL2main.lib")
 
-//TODO :: FAIRE UN SYSTEME DE CLIQUE GAUCHE POUR ECRIRE ET DROIT POUR EFFACER. BOUFFON.
 const int WIN_WIDTH = 1280;
 const int WIN_HEIGHT = 720;
 const int OFFSET_MENU = 0;
@@ -20,7 +19,7 @@ int_vector cellArray(NB_SQUARE_TOTAL);
 
 SDL_Window* window = nullptr;
 SDL_Surface* windowSurface = nullptr;
-SDL_Surface* imageSurface = nullptr;
+SDL_Surface* iconSurface = nullptr;
 SDL_Renderer* renderer = nullptr;
 
 
@@ -53,10 +52,10 @@ int main(int argc, char* args[]) {
 		else {
 			//Window Created
 			windowSurface = SDL_GetWindowSurface(window);
-			imageSurface = SDL_LoadBMP("src/pics/you.bmp");
+			iconSurface = SDL_LoadBMP("src/pics/you.bmp");
 
 			isRunning = true;
-			if (imageSurface == NULL) {
+			if (iconSurface == NULL) {
 				std::cout << "Image loading error: " << SDL_GetError() << std::endl;
 			}
 			else {
@@ -64,6 +63,7 @@ int main(int argc, char* args[]) {
 
 				//SDL_BlitSurface(imageSurface, NULL, windowSurface, NULL);
 				SDL_UpdateWindowSurface(window);
+				SDL_SetWindowIcon(window, iconSurface);
 			}
 
 
@@ -194,7 +194,7 @@ int main(int argc, char* args[]) {
 			}
 		}
 
-		//limite à 60FPS (je crois)
+		//limite Ã  60FPS (je crois)
 		SDL_Delay(1);
 		if (playing) {
 			SDL_Delay(20 * speed);
@@ -208,8 +208,8 @@ int main(int argc, char* args[]) {
 	SDL_DestroyRenderer(renderer);
 	renderer = nullptr;
 
-	SDL_FreeSurface(imageSurface);
-	imageSurface = nullptr;
+	SDL_FreeSurface(iconSurface);
+	iconSurface = nullptr;
 
 	SDL_DestroyWindow(window);
 	window = nullptr;
@@ -249,7 +249,7 @@ void changeState(bool isFirst, bool drawing, int x, int y) {
 
 	//only trigger by click event (once by click)
 	if (isFirst) {
-		//on prend l'inverse de la case cliqué en 1er
+		//on prend l'inverse de la case cliquÃ© en 1er
 		firstPos = calculateCoordonate(x, y);
 		if (firstPos >= 2112) {
 			return;
@@ -261,18 +261,18 @@ void changeState(bool isFirst, bool drawing, int x, int y) {
 			cellArray[firstPos] = 0;
 		}
 	}
-	//ce n'est pas l'event (on a glissé la souris)
+	//ce n'est pas l'event (on a glissÃ© la souris)
 	else {
 		int pos = calculateCoordonate(x, y);
 		if (pos < 2112 || OFFSET_MENU == 0) {
-			//on verifie que la position est différent que celle précédante
+			//on verifie que la position est diffÃ©rent que celle prÃ©cÃ©dante
 			if (oldPos != pos) {
-				//oldPos existe pas encore ou on est sorite du carré. Donc on a hasLeave=true
+				//oldPos existe pas encore ou on est sorite du carrÃ©. Donc on a hasLeave=true
 				oldPos = pos;
 				hasLeave = true;
 			}
 			else {
-				//la position n'a pas changé on fait rien
+				//la position n'a pas changÃ© on fait rien
 				hasLeave = false;
 			}
 			if (hasLeave) {
@@ -280,7 +280,7 @@ void changeState(bool isFirst, bool drawing, int x, int y) {
 				if (drawing) {
 					cellArray[pos] = 1;
 				}
-				//on a changé et on "efface"
+				//on a changÃ© et on "efface"
 				else {
 					cellArray[pos] = 0;
 				}
@@ -290,7 +290,7 @@ void changeState(bool isFirst, bool drawing, int x, int y) {
 }
 
 void renderSquare(int position, int r, int g, int b) {
-	//Colorie un certain rectangle (determiné par sa position dans la liste) dans une couleur rgb
+	//Colorie un certain rectangle (determinÃ© par sa position dans la liste) dans une couleur rgb
 	int x, y;
 	x = (int)position % ((int)WIN_WIDTH/SQUARE_SIZE_PX) * SQUARE_SIZE_PX;
 	y = (int)position / ((int)WIN_WIDTH / SQUARE_SIZE_PX) * SQUARE_SIZE_PX;
@@ -470,8 +470,8 @@ void tick() {
 
 			//nbVoisin += checkN(i);
 			// wikipedia:
-			//une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît) ;
-			//une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt.
+			//une cellule morte possÃ©dant exactement trois voisines vivantes devient vivante (elle naÃ®t) ;
+			//une cellule vivante possÃ©dant deux ou trois voisines vivantes le reste, sinon elle meurt.
 			//----
 
 			cellArrayVoisin[i] = nbVoisin;
